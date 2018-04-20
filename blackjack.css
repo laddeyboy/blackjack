@@ -1,0 +1,35 @@
+
+label {
+    color: white;
+    padding: 2px;
+}
+
+#table {
+    width: 700px;
+    height: 400px;
+    margin: 100px auto;
+    border: 2px solid black;
+    border-radius: 15px;
+    background-color: #1B8727;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#dealer-hand, #player-hand {
+    width: 500px;
+    height: 75px;
+    background-color: #20AA30;
+}
+
+.buttons {
+    padding-top: 10px;
+}
+
+.cards {
+    margin: 0;
+    border: 0;
+    font-size: 4em;
+    display: inline;
+}
