@@ -23,13 +23,21 @@ label {
     background-color: #20AA30;
 }
 
-.buttons {
-    padding-top: 10px;
+.buttons-div {
+    padding-top: 20px;
+}
+
+button {
+    /*font-size: 1em;*/
+    border-radius: 5px;
+    display: flex;
+    align-items: space-around;
 }
 
 .cards {
+    height: 75px;
     margin: 0;
+    padding-right: 3px;
     border: 0;
-    font-size: 4em;
     display: inline;
 }
