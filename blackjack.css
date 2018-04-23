@@ -1,13 +1,27 @@
 
+
 label {
+    font-size: 1.5em;
     color: white;
     padding: 2px;
 }
 
+#bet-table {
+    text-align: center;
+    font-size: 1em;
+    color: white;
+    margin: auto auto 20px auto;
+    height: 75px;
+    width: 400px;
+    border: 2px solid black;
+    border-radius: 15px;
+    background-color: #1B8727;
+}
+
 #table {
     width: 700px;
-    height: 400px;
-    margin: 100px auto;
+    height: 450px;
+    margin: 25px auto;
     border: 2px solid black;
     border-radius: 15px;
     background-color: #1B8727;
@@ -19,23 +33,101 @@ label {
 
 #dealer-hand, #player-hand {
     width: 500px;
-    height: 75px;
+    height: 100px;
     background-color: #20AA30;
 }
 
-.buttons-div {
-    padding-top: 20px;
+#messages {
+    font-size: 3em;
+    color: white;
 }
 
-button {
-    /*font-size: 1em;*/
-    border-radius: 5px;
-    display: flex;
-    align-items: space-around;
+.buttons-div {
+    vertical-align: middle;
+    padding: 20px;
+}
+
+#deal-button {
+    height: 60px;
+    width: 60px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    font-size: .9em;
+    border-radius: 50%;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 5%;
+    padding-left: 4%;
+    background-color: white;
+    border: 5px dashed blue;
+}
+
+#hit-button {
+    height: 60px;
+    width: 60px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    font-size: .9em;
+    border-radius: 50%;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 5%;
+    padding-left: 5%;
+    background-color: red;
+    border: 5px dashed white;
+    color: white;
+}
+#stand-button {
+    height: 60px;
+    width: 60px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    font-size: .9em;
+    border-radius: 50%;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 5%;
+    padding-left: 2%;
+    background-color: blue;
+    border: 5px dashed white;
+    color: white;
+}
+#reset {
+    height: 60px;
+    width: 60px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    font-size: .9em;
+    border-radius: 50%;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 2%;
+    background-color: black;
+    border: 5px dashed white;
+    color: white;
+}
+#cash-out {
+    height: 60px;
+    width: 60px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    font-size: .9em;
+    border-radius: 50%;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 2%;
+    background-color: gold;
+    border: 5px dashed black;
+    font-weight: bolder;
+    color: black;
+}
+
+#modal-container {
+    display: none;
 }
 
 .cards {
-    height: 75px;
+    height: 100px;
     margin: 0;
     padding-right: 3px;
     border: 0;

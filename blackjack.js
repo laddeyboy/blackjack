@@ -38,21 +38,41 @@ function shuffleDeck(aDeck) {
 
 function handValue(aHand) {
    let cardTotal = 0;
+   let dealtAce = false;
    for(j = 0; j < aHand.cardsInHand.length; j++){
+      if(aHand.cardsInHand[j].name  == 'A'){
+         dealtAce = true;
+      }
       cardTotal += aHand.cardsInHand[j].value;
    }
+   if(dealtAce && ((cardTotal + 10) < 22)) { cardTotal += 10; }
    return cardTotal;
 }
 
+function whosTheWinner(dealer, player) {
+   if(dealer.handValue < 22 && dealer.handValue > player.handValue) {
+      return "House Wins..."
+   }
+   else if( player.handValue < 22 && player.handValue > dealer.handValue) {
+      return "Player Wins!!!";
+   }
+   else if(player.handValue === dealer.handValue) {
+      return "PUSH";
+   }
+}
+
 $(document).ready(function(){
+   $('#modal-container').modal('show');
+   
+   
    //create deck and shuffle it
    var myDeck = new deck();
    myDeck = shuffleDeck(myDeck);
    //setup player and dealer hands for game play
    var playerHand = {cardsInHand: [], handValue: 0};
    var dealerHand = {cardsInHand: [], handValue: 0};
-   var playerTurn = true;
-   var dealerTurn = false;
+   var dealerTurn = true;
+   var clicks = 2;
 
    $('#deal-button').click(function(){
       //Initial Deal
@@ -64,52 +84,48 @@ $(document).ready(function(){
       $('#dealer-hand').append("<img id='dealer-first-card' class='cards' src='images/red_joker.png'/img>")
       $('#player-hand').append("<img class='cards' src='"+playerHand.cardsInHand[1].cardImage +"'/img>")
       $('#dealer-hand').append("<img class='cards' src='"+dealerHand.cardsInHand[1].cardImage +"'/img>")
+      dealerHand.handValue = handValue(dealerHand);
       playerHand.handValue = handValue(playerHand);
-      $('#the-player').append(playerHand.handValue);
+      if(playerHand.handValue === 21) { $('#the-player').text('BLACKJACK'); }
+      else { $('#the-player').append(playerHand.handValue); }
       $('#deal-button').hide();
    });
    
-   var clicks = 2;
+
    $('#hit-button').click(function(){
       //if player doesn't have 21
-      if(playerTurn) {
-         if(playerHand.handValue < 22) {
-            playerHand.cardsInHand.push(myDeck.pop());
-            $('#player-hand').append("<img class='cards' src='"+playerHand.cardsInHand[clicks].cardImage +"'/img>")
-            playerHand.handValue = handValue(playerHand);
-            if(playerHand.handValue > 21) {
-               playerTurn = false;
-               $('#the-player').text('Player BUSTS'); 
-            }
-            else {
-               $('#the-player').text(`Player: ${playerHand.handValue}`);
-               clicks++;
-            }
+      if(playerHand.handValue < 22) {
+         playerHand.cardsInHand.push(myDeck.pop());
+         $('#player-hand').append("<img class='cards' src='"+playerHand.cardsInHand[clicks].cardImage +"'/img>")
+         playerHand.handValue = handValue(playerHand);
+         if(playerHand.handValue > 21) {
+            $('#the-player').text('Player BUSTS'); 
+         }
+         else {
+            $('#the-player').text(`Player Has: ${playerHand.handValue}`);
+            clicks++;
          }
       }
    });
    
    $('#stand-button').click(function(){
-      if(playerTurn){
-         playerTurn = false;
-         dealerTurn = true;
-         clicks = 2;
+      clicks = 2;
+      $('#dealer-first-card').attr('src', dealerHand.cardsInHand[0].cardImage);
+      $('#the-dealer').append(dealerHand.handValue);
+      while(dealerTurn){
+         if(dealerHand.handValue <= 16) {
+            //draw card and show then calculate
+            dealerHand.cardsInHand.push(myDeck.pop());
+            $('#dealer-hand').append("<img class='cards' src='"+dealerHand.cardsInHand[clicks].cardImage +"'/img>");
+            dealerHand.handValue = handValue(dealerHand);
+            $('#the-dealer').text(`Dealer Has: ${dealerHand.handValue}`);
+            clicks++;
+         }
+         else {
+            dealerTurn = false;
+            //Calculate Winner
+            $('#messages').append(whosTheWinner(dealerHand, playerHand));
+         }
       }
-            // else if (dealerTurn) {
-         //DO DEALER STUFF ON STAND
-         // if(dealerHand.handValue < 22) {
-         // $('#dealer-first-card').attr('src', dealerHand.cardsInHand[0].cardImage)
-         // dealerHand.cardsInHand.push(myDeck.pop());
-         // $('#dealer-hand').append("<img class='cards' src='"+dealerHand.cardsInHand[clicks].cardImage +"'/img>")
-         // clicks++;
-      // }
-      //I won't need to handle dealer clicks. the dealer hand will play out once player stands!!!
-      else if(dealerTurn) {
-         //declare winner
-         //calculate bets
-         //reset hand
-         console.log('GAME OVER');
-      }
-      
    });
 });
