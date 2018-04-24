@@ -3,34 +3,55 @@
   <head>
     <meta charset='UTF-8'>
     <link rel="stylesheet" href="blackjack.css" type="text/css" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
     <script type="text/javascript" src="blackjack.js"></script> 
   </head>
   
   <body>
-    <!--create modal to request bankroll-->
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-      Launch demo modal
-    </button>
-    
-    <!-- Modal -->
+    <!-- Bankroll Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
+          <!--Modal Heading Div-->
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <h4 class="modal-title" id="welcomeModalLabel">&#9824 <span style='color:red'>&#9829</span> &#9827 <span style='color:red'>&#9830</span>
+                    Welcome to Blackjack <span style='color:red'>&#9830</span> &#9827 <span style='color:red'>&#9829</span>&#9824 
+            </h4>
+            <button type="button" class="close" data-dismiss="modal">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
+          <!--Modal Body Div-->
           <div class="modal-body">
-            ...
+            How much do you have to play with?<br>
+            <input id='player-bankroll' type='number' min='0' placeholder='Enter your bankroll'>
           </div>
+          <!--Modal Footer Div-->
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button id="bankroll-save" type="button" class="btn btn-primary">Let's Play</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!--Betting Modal-->
+    <div class="modal fade" id="bettingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <!--Modal Heading Div-->
+          <div class="modal-header">
+            <h4>Place Your Bets...</h4>
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <!--Modal Body Div-->
+          <div class="modal-body">
+            <p id='bet-error'>How much will you wager?</p>
+            <input id='player-bet' type='number'>
+            <button id="aBet" type="button" class="btn btn-primary">Place Bet</button>
           </div>
         </div>
       </div>
@@ -40,6 +61,7 @@
     <div id="bet-table">
       <p id='player-cash'>Bankroll:</p>
       <p id='current-bet'>Current Bet:</p>
+      <!--<input id="player-bet" class="bet-box" type="number">-->
     </div>
     
     <div id="table">
@@ -57,7 +79,7 @@
         <button id="deal-button"> Deal</button>
         <button id="hit-button">Hit</button>
         <button id="stand-button">Stand</button>
-        <button id="reset">Play Again</button>
+        <button id="place-bet">Place Bet</button>
         <button id="cash-out">Cash Out</button>
       </div>
     </div>

@@ -51,29 +51,90 @@ function handValue(aHand) {
 
 function whosTheWinner(dealer, player) {
    if(dealer.handValue < 22 && dealer.handValue > player.handValue) {
-      return "House Wins..."
+      return -1;
    }
    else if( player.handValue < 22 && player.handValue > dealer.handValue) {
-      return "Player Wins!!!";
+      return 1;
    }
    else if(player.handValue === dealer.handValue) {
-      return "PUSH";
+      return 0;
    }
 }
 
+function gotBlackjack(aHand) {
+   if(aHand.cardsInHand === 2 && aHand.handValue ===21) 
+   { return true; }
+   else 
+   {return false; }
+}
+
+function playerPayout(dealer, player, bet) {
+   let dealerCards = dealer.handValue;
+   let playerCards = player.handValue;
+   if(dealerCards < 22 && dealerCards > playerCards ){
+      //player loses
+      player.playerBank -= bet;
+   }
+   else if(playerCards < 22 && playerCards > dealerCards){
+      player.playerBank += bet;
+   }
+   else if(gotBlackjack(player) && !gotBlackjack(dealer)) {
+      player.playerBank += bet * 1.5;
+   }
+   //else it's a push nothing happens
+}
+
+function updatePlayerBankroll(aHand) {
+   $('#player-cash').text(`Bankroll: $${playerHand.playerBank}`);
+}
+
+
+//Program variables
+var cardDeck = new deck();
+//setup player and dealer hands for game play
+var playerHand = {cardsInHand: [], handValue: 0, playerBank: 0};
+var dealerHand = {cardsInHand: [], handValue: 0};
+var keepPlaying = true;
+
 $(document).ready(function(){
-   $('#modal-container').modal('show');
-   
-   
    //create deck and shuffle it
-   var myDeck = new deck();
-   myDeck = shuffleDeck(myDeck);
-   //setup player and dealer hands for game play
-   var playerHand = {cardsInHand: [], handValue: 0};
-   var dealerHand = {cardsInHand: [], handValue: 0};
+   var myDeck = shuffleDeck(cardDeck);
    var dealerTurn = true;
    var clicks = 2;
+   var bet = 0;
+   
+   //show modal to request player bankroll
+   $('#exampleModal').modal("show");
+   
+   $('#bankroll-save').click(function(){
+      if(parseInt($('#player-bankroll').val()) > 0){
+         playerHand.playerBank = parseInt($('#player-bankroll').val());
+         updatePlayerBankroll(playerHand);
+         $('#exampleModal').modal("hide");   
+      }
+      else {
+         $("#player-bankroll").val("");
+         $("#player-bankroll").attr('placeholder', 'GREATER THAN 0!');
+      }
+   });
+   
 
+   $('#place-bet').click(function() {
+      $('#bettingModal').modal("show");
+      $('#aBet').click(function() {
+         bet = parseInt($('#player-bet').val());
+         if(bet > 0 && bet <= playerHand.playerBank){
+            $('#current-bet').append(` $${bet}`);
+            $('#bettingModal').modal("hide");
+            $('#bet-error').empty();
+         }
+         else {
+            //player doesn't have that much
+            $('#bet-error').append("<p id='errorMsg' style='color:red;'>THAT'S MORE THAN YOU HAVE!!!</p>");
+         }
+      });
+   });
+   
    $('#deal-button').click(function(){
       //Initial Deal
       playerHand.cardsInHand.push(myDeck.pop());
@@ -91,7 +152,6 @@ $(document).ready(function(){
       $('#deal-button').hide();
    });
    
-
    $('#hit-button').click(function(){
       //if player doesn't have 21
       if(playerHand.handValue < 22) {
@@ -123,9 +183,16 @@ $(document).ready(function(){
          }
          else {
             dealerTurn = false;
+            playerPayout(dealerHand, playerHand, bet);
+            $('#player-cash').text(`Bankroll $${playerHand.playerBank}`);
             //Calculate Winner
-            $('#messages').append(whosTheWinner(dealerHand, playerHand));
+            // $('#messages').append(whosTheWinner(dealerHand, playerHand));
          }
       }
+   });
+   
+   $('#cash-out').click(function(){
+      keepPlaying = false;
+      console.log("THANKS FOR PLAYING");
    });
 });
