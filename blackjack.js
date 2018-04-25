@@ -1,3 +1,7 @@
+//global variables
+var cardDeck, myDeck, playerHand, dealerHand;
+var keepPlaying, dealerTurn, clicks;
+
 //setup a 'card' object
 function card(value, name, suit) {
     this.value = value;
@@ -71,45 +75,74 @@ function gotBlackjack(aHand) {
 function playerPayout(dealer, player, bet) {
    let dealerCards = dealer.handValue;
    let playerCards = player.handValue;
+   console.log(`dealerCards is ${dealerCards}, playerCards is ${playerCards}`);
    if(dealerCards < 22 && dealerCards > playerCards ){
-      //player loses
-      player.playerBank -= bet;
+      //player loses;
+      console.log("player lost");
    }
    else if(playerCards < 22 && playerCards > dealerCards){
-      player.playerBank += bet;
+      console.log("dealer lost");
+      player.playerBank += (player.bet * 2);
    }
    else if(gotBlackjack(player) && !gotBlackjack(dealer)) {
-      player.playerBank += bet * 1.5;
+      player.playerBank += player.bet + (player.bet * 1.5);
    }
    //else it's a push nothing happens
+   console.log('player.playerBank', player.playerBank);
 }
 
-function updatePlayerBankroll(aHand) {
-   $('#player-cash').text(`Bankroll: $${playerHand.playerBank}`);
+function showPlayerBankroll(aHand) { $('#player-cash').text(`Bankroll: $${playerHand.playerBank}`);}
+function showCurrentBet(bet) { $('#current-bet').text(`Current Bet: $${bet}`);}
+function showDealerHandValue(aHand){ $('#the-dealer').text(`Dealer: ${aHand.handValue}`);}
+function showPlayerHandValue(aHand){ $('#the-player').text(`Player: ${aHand.handValue}`);}
+
+function showBustOptions() {
+   $('#hit-button').hide();
+   $('#stand-button').hide();
+   $('#place-bet').show();
+   $('#cash-out').show();
 }
 
+function initialize () {
+   //Program variables
+   cardDeck = new deck();
+   playerHand = {cardsInHand: [], handValue: 0, playerBank: 0, playerBet: 0};
+   dealerHand = {cardsInHand: [], handValue: 0};
+   keepPlaying = true;
+   //create deck and shuffle it
+   myDeck = shuffleDeck(cardDeck);
+   dealerTurn = true;
+   clicks = 2;
+   bet = 0;
+}
 
-//Program variables
-var cardDeck = new deck();
-//setup player and dealer hands for game play
-var playerHand = {cardsInHand: [], handValue: 0, playerBank: 0};
-var dealerHand = {cardsInHand: [], handValue: 0};
-var keepPlaying = true;
+function resetHand(dealer, player){
+   $('#player-hand').empty();
+   $('#dealer-hand').empty();
+   dealerTurn = true;
+   $('#deal-button').show();
+   $('#hit-button').show();
+   $('#stand-button').show();
+   $('#the-dealer').text('Dealer:');
+   $('#the-player').text('Player:');
+   dealer.handValue = 0;
+   dealer.cardsInHand.splice(0, dealer.cardsInHand.length);
+   player.handValue = 0;
+   player.bet = 0;
+   player.cardsInHand.splice(0, player.cardsInHand.length);
+}
+
 
 $(document).ready(function(){
-   //create deck and shuffle it
-   var myDeck = shuffleDeck(cardDeck);
-   var dealerTurn = true;
-   var clicks = 2;
-   var bet = 0;
-   
+
    //show modal to request player bankroll
+   initialize();
    $('#exampleModal').modal("show");
    
    $('#bankroll-save').click(function(){
       if(parseInt($('#player-bankroll').val()) > 0){
          playerHand.playerBank = parseInt($('#player-bankroll').val());
-         updatePlayerBankroll(playerHand);
+         showPlayerBankroll(playerHand);
          $('#exampleModal').modal("hide");   
       }
       else {
@@ -118,15 +151,23 @@ $(document).ready(function(){
       }
    });
    
-
    $('#place-bet').click(function() {
+      // resetHand(dealerHand, playerHand);
       $('#bettingModal').modal("show");
+      $('#aBet').unbind();
       $('#aBet').click(function() {
-         bet = parseInt($('#player-bet').val());
-         if(bet > 0 && bet <= playerHand.playerBank){
-            $('#current-bet').append(` $${bet}`);
+         console.log("I CLICKED THE BET");
+         resetHand(dealerHand, playerHand);
+         playerHand.bet = parseInt($('#player-bet').val());
+         if(playerHand.bet > 0 && playerHand.bet <= playerHand.playerBank){
+            showCurrentBet(playerHand.bet);
             $('#bettingModal').modal("hide");
-            $('#bet-error').empty();
+            playerHand.playerBank -= playerHand.bet;
+            console.log("What is my bank?", playerHand.playerBank);
+            showPlayerBankroll(playerHand);
+            //******NOT WORKING******
+            //the case where the error below needs to be cleared.
+            // $('#bet-error').empty();
          }
          else {
             //player doesn't have that much
@@ -136,19 +177,25 @@ $(document).ready(function(){
    });
    
    $('#deal-button').click(function(){
+      $('#place-bet').hide();
+      $('#cash-out').hide();
       //Initial Deal
       playerHand.cardsInHand.push(myDeck.pop());
       dealerHand.cardsInHand.push(myDeck.pop());
       playerHand.cardsInHand.push(myDeck.pop());
       dealerHand.cardsInHand.push(myDeck.pop());
-      $('#player-hand').append("<img class='cards' src='"+playerHand.cardsInHand[0].cardImage +"'/img>")
-      $('#dealer-hand').append("<img id='dealer-first-card' class='cards' src='images/red_joker.png'/img>")
-      $('#player-hand').append("<img class='cards' src='"+playerHand.cardsInHand[1].cardImage +"'/img>")
-      $('#dealer-hand').append("<img class='cards' src='"+dealerHand.cardsInHand[1].cardImage +"'/img>")
+      $('#player-hand').append("<img class='cards' src='"+playerHand.cardsInHand[0].cardImage +"'/img>");
+      $('#dealer-hand').append("<img id='dealer-first-card' class='cards' src='images/red_joker.png'/img>");
+      $('#player-hand').append("<img class='cards' src='"+playerHand.cardsInHand[1].cardImage +"'/img>");
+      $('#dealer-hand').append("<img class='cards' src='"+dealerHand.cardsInHand[1].cardImage +"'/img>");
       dealerHand.handValue = handValue(dealerHand);
       playerHand.handValue = handValue(playerHand);
-      if(playerHand.handValue === 21) { $('#the-player').text('BLACKJACK'); }
-      else { $('#the-player').append(playerHand.handValue); }
+      if(playerHand.handValue === 21) { 
+         $('#the-player').text('BLACKJACK');
+         showBustOptions();
+         
+      }
+      else { showPlayerHandValue(playerHand); }
       $('#deal-button').hide();
    });
    
@@ -159,7 +206,8 @@ $(document).ready(function(){
          $('#player-hand').append("<img class='cards' src='"+playerHand.cardsInHand[clicks].cardImage +"'/img>")
          playerHand.handValue = handValue(playerHand);
          if(playerHand.handValue > 21) {
-            $('#the-player').text('Player BUSTS'); 
+            $('#the-player').text('Player BUSTS');
+            showBustOptions();
          }
          else {
             $('#the-player').text(`Player Has: ${playerHand.handValue}`);
@@ -169,6 +217,8 @@ $(document).ready(function(){
    });
    
    $('#stand-button').click(function(){
+      $('#place-bet').show();
+      $('#cash-out').show();
       clicks = 2;
       $('#dealer-first-card').attr('src', dealerHand.cardsInHand[0].cardImage);
       $('#the-dealer').append(dealerHand.handValue);
@@ -178,12 +228,12 @@ $(document).ready(function(){
             dealerHand.cardsInHand.push(myDeck.pop());
             $('#dealer-hand').append("<img class='cards' src='"+dealerHand.cardsInHand[clicks].cardImage +"'/img>");
             dealerHand.handValue = handValue(dealerHand);
-            $('#the-dealer').text(`Dealer Has: ${dealerHand.handValue}`);
+            showDealerHandValue();
             clicks++;
          }
          else {
             dealerTurn = false;
-            playerPayout(dealerHand, playerHand, bet);
+            playerPayout(dealerHand, playerHand);
             $('#player-cash').text(`Bankroll $${playerHand.playerBank}`);
             //Calculate Winner
             // $('#messages').append(whosTheWinner(dealerHand, playerHand));
@@ -192,7 +242,8 @@ $(document).ready(function(){
    });
    
    $('#cash-out').click(function(){
-      keepPlaying = false;
+      $('#cashOutModal').modal("show");
       console.log("THANKS FOR PLAYING");
+      $('#winnings').append(` $${playerHand.playerBank}`);
    });
 });
