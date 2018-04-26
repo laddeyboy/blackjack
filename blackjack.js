@@ -73,6 +73,8 @@ function gotBlackjack(aHand) {
 }
 
 function playerPayout(dealer, player, bet) {
+   $('#hit-button').hide();
+   $('#stand-button').hide();
    let dealerCards = dealer.handValue;
    let playerCards = player.handValue;
    console.log(`dealerCards is ${dealerCards}, playerCards is ${playerCards}`);
@@ -121,8 +123,6 @@ function resetHand(dealer, player){
    $('#dealer-hand').empty();
    dealerTurn = true;
    $('#deal-button').show();
-   $('#hit-button').show();
-   $('#stand-button').show();
    $('#the-dealer').text('Dealer:');
    $('#the-player').text('Player:');
    dealer.handValue = 0;
@@ -134,7 +134,9 @@ function resetHand(dealer, player){
 
 
 $(document).ready(function(){
-
+   //hide the play buttons
+   $('#hit-button').hide();
+   $('#stand-button').hide();
    //show modal to request player bankroll
    initialize();
    $('#exampleModal').modal("show");
@@ -177,6 +179,8 @@ $(document).ready(function(){
    });
    
    $('#deal-button').click(function(){
+      $('#hit-button').show();
+      $('#stand-button').show();
       $('#place-bet').hide();
       $('#cash-out').hide();
       //Initial Deal
@@ -193,7 +197,6 @@ $(document).ready(function(){
       if(playerHand.handValue === 21) { 
          $('#the-player').text('BLACKJACK');
          showBustOptions();
-         
       }
       else { showPlayerHandValue(playerHand); }
       $('#deal-button').hide();
@@ -207,6 +210,8 @@ $(document).ready(function(){
          playerHand.handValue = handValue(playerHand);
          if(playerHand.handValue > 21) {
             $('#the-player').text('Player BUSTS');
+            $('#dealer-first-card').attr('src', dealerHand.cardsInHand[0].cardImage);
+            showDealerHandValue(dealerHand);
             showBustOptions();
          }
          else {
@@ -228,7 +233,7 @@ $(document).ready(function(){
             dealerHand.cardsInHand.push(myDeck.pop());
             $('#dealer-hand').append("<img class='cards' src='"+dealerHand.cardsInHand[clicks].cardImage +"'/img>");
             dealerHand.handValue = handValue(dealerHand);
-            showDealerHandValue();
+            showDealerHandValue(dealerHand);
             clicks++;
          }
          else {
